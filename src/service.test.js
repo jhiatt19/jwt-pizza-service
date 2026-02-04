@@ -1,5 +1,5 @@
-const request = require('supertest');
-const app = require('./service');
+import request from 'supertest';
+import app from './service';
 
 const testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
 let testUserAuthToken;
