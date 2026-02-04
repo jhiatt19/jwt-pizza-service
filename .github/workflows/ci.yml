@@ -34,25 +34,26 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Write config file
-        run: |
-          echo "module.exports = {
-            jwtSecret: '${{ secrets.JWTSECRET }}'},
-            db: {
-              connection: {
-                host: '127.0.0.1',
-                user: 'root',
-                password: 'chargers19',
-                database: 'pizza',
-                connectTimeout: 60000,
-                },
-                listPerPage:10,"
-              },
-              factor: {
-                url: 'https://pizza-factory.cs329.click',
-                apiKey: '${{ secrets.FACTORY_API_KEY }},
-                '},
-              };" > src/config.js
+      # - name: Write config file
+      #   run: |
+      #     echo "module.exports = {
+      #       jwtSecret: '${{ secrets.JWTSECRET }}'},
+      #       db: {
+      #         connection: {
+      #           host: '127.0.0.1',
+      #           user: 'root',
+      #           password: 'tempdbpassword',
+      #           database: 'pizza',
+      #           connectTimeout: 60000,
+      #           },
+      #           listPerPage:10,"
+      #         },
+      #         factor: {
+      #           url: 'https://pizza-factory.cs329.click',
+      #           apiKey: '${{ secrets.FACTORY_API_KEY }},
+      #           '},
+      #         };" > src/config.js
+
       - name: Tests
         run: npm test
 
