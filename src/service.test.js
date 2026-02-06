@@ -106,5 +106,5 @@ test("add menu", async () => {
   expect(addMenuRes.status).toBe(200);
 
   console.log(addMenuRes.body.length);
-  expect(addMenuRes.body).toMatch(newMenu);
+  expect(addMenuRes.body.toString()).toMatch(newMenu.toString());
 });
