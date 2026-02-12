@@ -57,6 +57,12 @@ jobs:
                 },
               };" > src/config.js
 
+      - name: Make scripts executable
+        run: chmod +x /src/generatePizzaData.sh
+
+      - name: Setup Database Data
+        run: ./deployService.sh http://localhost:3000
+
       - name: Tests
         run: npm test
 
