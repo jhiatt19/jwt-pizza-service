@@ -59,6 +59,9 @@ jobs:
       - name: Start pizza service
         run: npm start &
 
+      - name: Install dependency
+        run: sudo apt-get install jq -y
+
       - name: Make scripts executable
         run: chmod +x ./src/generatePizzaData.sh
 
