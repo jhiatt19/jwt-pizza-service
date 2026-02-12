@@ -40,7 +40,7 @@ jobs:
       - name: Write config file
         run: |
           echo "module.exports = {
-            jwtSecret: '${{ secrets.JWTSECRET }}'},
+            jwtSecret: '${{ secrets.JWTSECRET }}',
             db: {
               connection: {
                 host: '127.0.0.1',
