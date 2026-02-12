@@ -56,8 +56,13 @@ jobs:
                 apiKey: '${{ secrets.FACTORY_API_KEY }}',
                 },
               };" > src/config.js
+
       - name: Start pizza service
         run: npm start &
+
+      - name: Wait for Server to be ready
+        run: |
+          timeout 30s bash -c 'until curl -s http://localhost:3000 > /dev/null; do echo "Waiting for API..."; sleep 2; done'
 
       - name: Install dependency
         run: sudo apt-get install jq -y
