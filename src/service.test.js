@@ -21,9 +21,9 @@ async function createUser(role) {
   return { ...user, password: `${role}-toomanysecrets` };
 }
 
+let franchiseInfo;
 let testUser = "diner";
 let adminUser = "admin";
-let franchiseUser = "franchisee";
 const testOrder = {
   franchiseId: 1,
   storeId: 1,
@@ -33,19 +33,11 @@ const testOrder = {
 beforeAll(async () => {
   testUser = await createUser(Role.Diner);
   adminUser = await createUser(Role.Admin);
-  franchiseUser = await createUser(Role.Franchisee);
 
   const regTest = await request(app).post("/api/auth").send(testUser);
   expect(regTest.status).toBe(200);
   expect(regTest.body.user.name).toEqual(testUser.name);
   testUserAuthToken = regTest.body.token;
-
-  const franchiseTest = await request(app)
-    .post("/api/auth")
-    .send(franchiseUser);
-  expect(franchiseTest.status).toBe(200);
-  expect(franchiseTest.body.user.name).toEqual(franchiseUser.name);
-  franchiseUserAuthToken = franchiseTest.body.token;
 
   const testUserRes = await request(app)
     .delete("/api/auth")
@@ -53,13 +45,10 @@ beforeAll(async () => {
   expect(testUserRes.status).toBe(200);
   expect(testUserRes.body.message).toMatch("logout successful");
 
-  const franchiseUserRes = await request(app)
-    .delete("/api/auth")
-    .set("Authorization", `Bearer ${franchiseUserAuthToken}`);
-  expect(franchiseUserRes.status).toBe(200);
-  expect(franchiseUserRes.body.message).toMatch("logout successful");
-  console.log("Set up was successful");
-  console.log(`Set up auth token: ${testUserAuthToken}`);
+  franchiseInfo = {
+    name: randomName(),
+    admins: [{ name: testUser.name, email: testUser.email }],
+  };
 });
 
 test("login diner", async () => {
@@ -114,11 +103,6 @@ test("update user", async () => {
 });
 
 test("create franchise", async () => {
-  const franchiseInfo = {
-    name: randomName(),
-    admins: [{ name: adminUser.name, email: adminUser.email }],
-  };
-
   const createFranchiseResponse = await request(app)
     .post("/api/franchise")
     .set("Authorization", `Bearer ${adminUserAuthToken}`)
@@ -149,13 +133,37 @@ test("get orders", async () => {
   expect(getOrderRes.body.dinerId).toBe(Number(testUser.id));
 });
 
-// test("login Franchisee", async () => {
-//   const loginRes = await request(app).put("/api/auth").send(franchiseUser);
-//   franchiseUserAuthToken = loginRes.body.token;
+test("get franchises", async () => {
+  const getFranchiseRes = await request(app).get(
+    "/api/franchise?name=pizzaPocket",
+  );
+  expect(getFranchiseRes.status).toBe(200);
+  expect(getFranchiseRes.body.franchises[0].id).toBe(1);
+});
 
-//   expect(loginRes.status).toBe(200);
-//   expect(loginRes.body.user.name).toMatch(franchiseUser.name);
-// });
+test("login Franchisee", async () => {
+  const loginRes = await request(app).put("/api/auth").send(testUser);
+  franchiseUserAuthToken = loginRes.body.token;
+
+  expect(loginRes.status).toBe(200);
+  expect(loginRes.body.user.name).toMatch(testUser.name);
+});
+
+test("get user Franchise", async () => {
+  const getFranchiseRes = await request(app)
+    .get(`/api/franchise/${testUser.id}`)
+    .set("Authorization", `Bearer ${franchiseUserAuthToken}`);
+  expect(getFranchiseRes.status).toBe(200);
+  expect(getFranchiseRes.body[0].id).toBe(Number(franchiseInfo.id));
+});
+
+test("delete franchise", async () => {
+  const deleteRes = await request(app).delete(
+    `/api/franchise/${franchiseInfo.id}`,
+  );
+  expect(deleteRes.status).toBe(200);
+  expect(deleteRes.body.message).toMatch("franchise deleted");
+});
 
 test("Get Menu", async () => {
   const fakeMenu = {
@@ -192,17 +200,17 @@ test("add menu", async () => {
   conn.end();
 });
 
-// afterAll(async () => {
-//   const conn = await DB.getConnection();
-//   const deleteUsers = [testUser, adminUser];
-//   for (const user of deleteUsers) {
-//     console.log(user);
-//     await DB.query(
-//       conn,
-//       "DELETE FROM userRole WHERE userId = (SELECT id FROM user WHERE name = ?);",
-//       [user.name],
-//     );
-//     await DB.query(conn, "DELETE FROM user WHERE name = ?", [user.name]);
-//   }
-//   await conn.end();
-// });
+afterAll(async () => {
+  const conn = await DB.getConnection();
+  const deleteUsers = [testUser, adminUser];
+  for (const user of deleteUsers) {
+    console.log(user);
+    await DB.query(
+      conn,
+      "DELETE FROM userRole WHERE userId = (SELECT id FROM user WHERE name = ?);",
+      [user.name],
+    );
+    await DB.query(conn, "DELETE FROM user WHERE name = ?", [user.name]);
+  }
+  await conn.end();
+});
