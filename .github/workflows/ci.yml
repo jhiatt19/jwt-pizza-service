@@ -26,7 +26,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Noded
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
@@ -56,12 +56,14 @@ jobs:
                 apiKey: '${{ secrets.FACTORY_API_KEY }}',
                 },
               };" > src/config.js
+      - name: Start pizza service
+        run: npm start &
 
       - name: Make scripts executable
         run: chmod +x ./src/generatePizzaData.sh
 
       - name: Setup Database Data
-        run: ./src/generatePizzaData.sh http://localhost:3306
+        run: ./src/generatePizzaData.sh http://localhost:3000
 
       - name: Tests
         run: npm test
