@@ -49,12 +49,12 @@ jobs:
                 database: 'pizza',
                 connectTimeout: 60000,
                 },
-                listPerPage:10,"
+                listPerPage:10,
               },
               factor: {
                 url: 'https://pizza-factory.cs329.click',
-                apiKey: '${{ secrets.FACTORY_API_KEY }},
-                '},
+                apiKey: '${{ secrets.FACTORY_API_KEY }}',
+                },
               };" > src/config.js
 
       - name: Tests
