@@ -61,7 +61,7 @@ jobs:
         run: chmod +x ./src/generatePizzaData.sh
 
       - name: Setup Database Data
-        run: ./src/generatePizzaData.sh http://localhost:3000
+        run: ./src/generatePizzaData.sh http://localhost:3306
 
       - name: Tests
         run: npm test
