@@ -107,6 +107,17 @@ class DB {
     }
   }
 
+  async getUsers() {
+    const connection = await this.getConnection();
+    try {
+      const userResult = await this.query(connection, "SELECT * FROM user");
+      console.log(userResult);
+      return userResult;
+    } finally {
+      connection.end();
+    }
+  }
+
   async updateUser(userId, name, email, password) {
     const connection = await this.getConnection();
     try {

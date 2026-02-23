@@ -211,7 +211,12 @@ test("list users", async () => {
   const listUsersRes = await request(app)
     .get("/api/user")
     .set("Authorization", "Bearer " + userToken);
-  expect(listUsersRes.status).toBe(200);
+  expect(listUsersRes.body[0]).toMatchObject({
+    email: "a@jwt.com",
+    id: 1,
+    name: "常用名字",
+    password: "$2b$10$Meon9K2Wr1RnZxm/.vBu6elpjW1bSxMmo5mkriOHUchKkmkrAcPxy",
+  });
 });
 
 async function registerUser(service) {
