@@ -157,7 +157,7 @@ class DB {
     try {
       await connection.beginTransaction();
       try {
-        await this.query(connection, `DELETE FROM userRole WHERE objectId=?`, [
+        await this.query(connection, `DELETE FROM userRole WHERE userid=?`, [
           userId,
         ]);
         await this.query(connection, `DELETE FROM user WHERE id=?`, [userId]);
