@@ -110,9 +110,19 @@ class DB {
   async getUsers() {
     const connection = await this.getConnection();
     try {
-      const userResult = await this.query(connection, "SELECT * FROM user");
-      console.log(userResult);
-      return userResult;
+      const userResult = await this.query(
+        connection,
+        "SELECT * FROM user INNER JOIN userRole ON user.id = userRole.userid",
+      );
+      const editedResult = {
+        users: userResult.map((row) => ({
+          id: row.id,
+          name: row.name,
+          email: row.email,
+          roles: [{ role: row.role }],
+        })),
+      };
+      return editedResult;
     } finally {
       connection.end();
     }

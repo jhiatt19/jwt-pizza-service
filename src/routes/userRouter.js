@@ -86,7 +86,7 @@ userRouter.delete(
   "/:userId",
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
-    res.json({ message: "not implemented" });
+    res.json({ message: "i'm the issue its me" });
   }),
 );
 
