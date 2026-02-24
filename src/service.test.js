@@ -207,29 +207,23 @@ test("list users unauthorized", async () => {
 });
 
 test("list users", async () => {
-  const [user, userToken] = await registerUser(request(app));
   const listUsersRes = await request(app)
     .get("/api/user")
-    .set("Authorization", "Bearer " + userToken);
-  expect(listUsersRes.body[0]).toMatchObject({
+    .set("Authorization", "Bearer " + adminUserAuthToken);
+  expect(listUsersRes.body.users[0]).toMatchObject({
     email: "a@jwt.com",
     id: 1,
     name: "常用名字",
-    password: "$2b$10$Meon9K2Wr1RnZxm/.vBu6elpjW1bSxMmo5mkriOHUchKkmkrAcPxy",
   });
 });
 
-async function registerUser(service) {
-  const testUser = {
-    name: "pizza diner",
-    email: `${randomName()}@test.com`,
-    password: "a",
-  };
-  const registerRes = await service.post("/api/auth").send(testUser);
-  registerRes.body.user.password = testUser.password;
-
-  return [registerRes.body.user, registerRes.body.token];
-}
+test("delete users", async () => {
+  const deleteUser = createUser(Role.Diner);
+  const deleteUsers = await request(app)
+    .delete(`/api/user/${deleteUser.id}`)
+    .set("Authorization", "Bearer " + adminUserAuthToken);
+  expect(deleteUsers.body).toEqual({ message: "user deleted" });
+});
 
 afterAll(async () => {
   const conn = await DB.getConnection();
