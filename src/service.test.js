@@ -211,9 +211,9 @@ test("list users", async () => {
     .get("/api/user")
     .set("Authorization", "Bearer " + adminUserAuthToken);
   expect(listUsersRes.body.users[0]).toMatchObject({
-    email: "a@jwt.com",
-    id: 1,
-    name: "常用名字",
+    email: adminUser.email,
+    id: adminUser.id,
+    name: adminUser.name,
   });
 });
 
