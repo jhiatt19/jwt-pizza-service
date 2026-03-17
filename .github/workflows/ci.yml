@@ -16,7 +16,7 @@ jobs:
         image: mysql:8.0.29
         env:
           MYSQL_ROOT_PASSWORD: password
-          MYSQL_ROOT_USERNAME: admin
+          MYSQL_ROOT_USERNAME: root
           MYSQL_DATABASE: pizza
         ports:
           - "3306:3306"
@@ -44,7 +44,7 @@ jobs:
             jwtSecret: '${{ secrets.JWTSECRET }}',
             db: {
               connection: {
-                host: ${{secrets.DB_HOSTNAME}},
+                host: '127.0.0.1',
                 user: ${{secrets.DB_USERNAME}},
                 password: ${{secrets.DB_PASSWORD}},
                 database: 'jwt-pizza-service-db',
