@@ -82,7 +82,7 @@ jobs:
           cp *.json dist
           sed -i "s/user: 'root'/user: '${{ secrets.DB_USERNAME }}'/g" dist/config.js
           sed -i "s/password: 'tempdbpassword'/password: '${{ secrets.DB_PASSWORD }}'/g" dist/config.js
-          sed -i "s/host: '127.0.0.1'/host: '${{ secrets.DB_HOSTNAME }}'/g" dist/config.js
+          sed -i "s/DB_HOST_PLACEHOLDER/${{ secrets.DB_HOSTNAME }}/g" dist/config.js
 
       - name: Update distribution artifact
         uses: actions/upload-artifact@v4
