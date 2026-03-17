@@ -15,13 +15,13 @@ jobs:
       mysql:
         image: mysql:8.0.29
         env:
-          MYSQL_ROOT_PASSWORD: tempdbpassword
-          MYSQL_ROOT_USERNAME: root
+          MYSQL_ROOT_PASSWORD: ${{secrets.DB_PASSWORD}}
+          MYSQL_ROOT_USERNAME: ${{secrets.DB_USERNAME}}
           MYSQL_DATABASE: pizza
         ports:
           - "3306:3306"
         options: >-
-          --health-cmd "mysqladmin ping -ptempdbpassword" --health-interval 10s --health-start-period 10s --health-timeout 5s --health-retries 10
+          --health-cmd "mysqladmin ping -p${{secrets.DB_PASSWORD}}" --health-interval 10s --health-start-period 10s --health-timeout 5s --health-retries 10
 
     steps:
       - name: Checkout repo
@@ -44,10 +44,10 @@ jobs:
             jwtSecret: '${{ secrets.JWTSECRET }}',
             db: {
               connection: {
-                host: '127.0.0.1',
-                user: 'root',
-                password: 'tempdbpassword',
-                database: 'pizza',
+                host: ${{secrets.DB_HOSTNAME}},
+                user: ${{secrets.DB_USERNAME}},
+                password: ${{secrets.DB_PASSWORD}},
+                database: 'jwt-pizza-service-db',
                 connectTimeout: 60000,
                 },
                 listPerPage:10,
