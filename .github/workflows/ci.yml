@@ -45,8 +45,8 @@ jobs:
             db: {
               connection: {
                 host: '127.0.0.1',
-                user: ${{secrets.DB_USERNAME}},
-                password: ${{secrets.DB_PASSWORD}},
+                user: 'admin',
+                password: 'tempdatabase',
                 database: 'jwt-pizza-service-db',
                 connectTimeout: 60000,
                 },
