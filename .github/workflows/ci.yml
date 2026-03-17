@@ -5,6 +5,7 @@ on:
     branches:
       - main
   workflow_dispatch:
+
 jobs:
   build:
     name: Build
@@ -16,12 +17,14 @@ jobs:
         image: mysql:8.0.29
         env:
           MYSQL_ROOT_PASSWORD: tempdbpassword
-          MYSQL_ROOT_USERNAME: root
           MYSQL_DATABASE: pizza
         ports:
           - "3306:3306"
         options: >-
-          --health-cmd "mysqladmin ping -ptempdbpassword" --health-interval 10s --health-start-period 10s --health-timeout 5s --health-retries 10
+          --health-cmd "mysqladmin ping -ptempdbpassword" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 10
 
     steps:
       - name: Checkout repo
@@ -38,9 +41,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Write config file
+      - name: Write config file for Testing
         run: |
-          echo "module.exports = {
+          cat <<EOF > src/config.js
+          module.exports = {
             jwtSecret: '${{ secrets.JWTSECRET }}',
             db: {
               connection: {
@@ -49,19 +53,20 @@ jobs:
                 password: 'tempdbpassword',
                 database: 'pizza',
                 connectTimeout: 60000,
-                },
-                listPerPage:10,
               },
-              factory: {
-                url: 'https://pizza-factory.cs329.click',
-                apiKey: '${{ secrets.FACTORY_API_KEY }}',
-                },
-              };" > src/config.js
+              listPerPage: 10,
+            },
+            factory: {
+              url: 'https://pizza-factory.cs329.click',
+              apiKey: '${{ secrets.FACTORY_API_KEY }}',
+            },
+          };
+          EOF
 
       - name: Tests
         run: npm test
 
-      - name: set version
+      - name: Set version
         id: set_version
         run: |
           version=$(date +'%Y%m%d.%H%M%S')
@@ -74,22 +79,39 @@ jobs:
           color=$(echo "$coverage < 80" | bc | awk '{if ($1) print "red"; else print "green"}')
           curl -s -X POST "https://pizza-factory.cs329.click/api/badge/${{ secrets.NET_ID }}/jwtpizzaservicecoverage?label=Coverage&value=$coverage%25&color=$color" -H "authorization: bearer ${{ secrets.FACTORY_API_KEY }}"
 
-      - name: Create dist
+      - name: Create dist and write Production config
         run: |
           mkdir dist
           cp Dockerfile dist
           cp -r src/* dist
           cp *.json dist
-          sed -i "s|host:.*|host: '${{ secrets.DB_HOSTNAME }}',|g" dist/config.js
-          sed -i "s|user:.*|user: '${{ secrets.DB_USERNAME }}',|g" dist/config.js
-          sed -i "s|password:.*|password: '${{ secrets.DB_PASSWORD }}',|g" dist/config.js
-          sed -i "s|database:.*|database: '${{secrets.DB_NAME}}',|g" dist/config.js
+          # Overwrite the test config in dist with Production values
+          cat <<EOF > dist/config.js
+          module.exports = {
+            jwtSecret: '${{ secrets.JWTSECRET }}',
+            db: {
+              connection: {
+                host: '${{ secrets.DB_HOSTNAME }}',
+                user: '${{ secrets.DB_USERNAME }}',
+                password: '${{ secrets.DB_PASSWORD }}',
+                database: '${{ secrets.DB_NAME }}',
+                connectTimeout: 60000,
+              },
+              listPerPage: 10,
+            },
+            factory: {
+              url: 'https://pizza-factory.cs329.click',
+              apiKey: '${{ secrets.FACTORY_API_KEY }}',
+            },
+          };
+          EOF
 
       - name: Update distribution artifact
         uses: actions/upload-artifact@v4
         with:
           name: package
           path: dist/
+
   deploy:
     runs-on: ubuntu-latest
     permissions:
@@ -127,7 +149,6 @@ jobs:
           ECR_REPOSITORY: "jwt-pizza-service"
         run: |
           docker build --no-cache --platform=linux/arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY --push .
-          docker build --platform=linux/arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY --push .
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >>  $GITHUB_OUTPUT
 
       - name: Deploy new container
