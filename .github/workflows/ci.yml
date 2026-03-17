@@ -80,9 +80,9 @@ jobs:
           cp Dockerfile dist
           cp -r src/* dist
           cp *.json dist
-          sed -i "s/user: 'root'/user: '${{ secrets.DB_USERNAME }}'/g" dist/config.js
-          sed -i "s/password: 'tempdbpassword'/password: '${{ secrets.DB_PASSWORD }}'/g" dist/config.js
-          sed -i "s/DB_HOST_PLACEHOLDER/${{ secrets.DB_HOSTNAME }}/g" dist/config.js
+          sed -i "s|host:.*|host: '${{ secrets.DB_HOSTNAME }}',|g" dist/config.js
+          sed -i "s|user:.*|user: '${{ secrets.DB_USERNAME }}',|g" dist/config.js
+          sed -i "s|password:.*|password: '${{ secrets.DB_PASSWORD }}',|g" dist/config.js
 
       - name: Update distribution artifact
         uses: actions/upload-artifact@v4
