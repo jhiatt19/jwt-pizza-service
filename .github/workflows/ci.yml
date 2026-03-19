@@ -85,16 +85,17 @@ jobs:
           cp Dockerfile dist
           cp -r src/* dist
           cp *.json dist
-          # Overwrite the test config in dist with Production values
+          # Note: The app will read from process.env in production, 
+          # but we keep this file generation for consistency.
           cat <<EOF > dist/config.js
           module.exports = {
             jwtSecret: '${{ secrets.JWTSECRET }}',
             db: {
               connection: {
-                host: '${{ secrets.DB_HOSTNAME }}',
-                user: '${{ secrets.DB_USERNAME }}',
-                password: '${{ secrets.DB_PASSWORD }}',
-                database: '${{ secrets.DB_NAME }}',
+                host: process.env.DB_HOSTNAME,
+                user: process.env.DB_USERNAME,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_NAME,
                 connectTimeout: 60000,
               },
               listPerPage: 10,
@@ -116,10 +117,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+      contents: read
     needs: build
     env:
       version: ${{needs.build.outputs.version}}
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Download distribution artifact
         uses: actions/download-artifact@v4
         with:
@@ -136,6 +141,13 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Inject GitHub Secrets into Task Definition
+        run: |
+          sed -i "s|REPLACE_DB_HOST|${{ secrets.DB_HOSTNAME }}|g" task-definition.json
+          sed -i "s|REPLACE_DB_USER|${{ secrets.DB_USERNAME }}|g" task-definition.json
+          sed -i "s|REPLACE_DB_PASSWORD|${{ secrets.DB_PASSWORD }}|g" task-definition.json
+          sed -i "s|REPLACE_DB_NAME|${{ secrets.DB_NAME }}|g" task-definition.json
+
       - name: Set up machine emulation
         uses: docker/setup-qemu-action@v3
 
@@ -148,16 +160,16 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: "jwt-pizza-service"
         run: |
-          docker build --no-cache --platform=linux/arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY --push .
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >>  $GITHUB_OUTPUT
+          docker build --no-cache --platform=linux/arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY:latest --push .
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: task-definition.json # You'll need this file in your repo
+          task-definition: task-definition.json
           container-name: jwt-pizza-service
-          image: ${{ steps.login-ecr.outputs.registry }}/jwt-pizza-service:latest
+          image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -166,10 +178,3 @@ jobs:
           service: jwt-pizza-service-new
           cluster: jwt-pizza-service-new
           wait-for-service-stability: true
-          
-      - name: Deploy new container
-        run: |
-          aws ecs update-service \
-            --cluster jwt-pizza-service-new \
-            --service jwt-pizza-service-new \
-            --force-new-deployment

@@ -13,19 +13,11 @@
           "protocol": "tcp"
         }
       ],
-      "secrets": [
-        {
-          "name": "DB_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:897920190853:secret:my-app/db-credentials:password::"
-        },
-        {
-          "name": "DB_USERNAME",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:897920190853:secret:my-app/db-credentials:username::"
-        },
-        {
-          "name": "DB_HOSTNAME",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:897920190853:secret:my-app/db-credentials:host::"
-        }
+      "environment": [
+        { "name": "DB_HOSTNAME", "value": "REPLACE_DB_HOST" },
+        { "name": "DB_USERNAME", "value": "REPLACE_DB_USER" },
+        { "name": "DB_PASSWORD", "value": "REPLACE_DB_PASSWORD" },
+        { "name": "DB_NAME", "value": "REPLACE_DB_NAME" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -38,6 +30,7 @@
     }
   ],
   "executionRoleArn": "arn:aws:iam::897920190853:role/jwt-pizza-ecs-new",
+  "taskRoleArn": "arn:aws:iam::897920190853:role/jwt-pizza-ecs-new",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
