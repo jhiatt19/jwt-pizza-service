@@ -1,0 +1,48 @@
+{
+  "family": "jwt-pizza-service-new",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "jwt-pizza-service",
+      "image": "REPLACE_ME_WITH_ECR_URI",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:897920190853:secret:my-app/db-credentials:password::"
+        },
+        {
+          "name": "DB_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:897920190853:secret:my-app/db-credentials:username::"
+        },
+        {
+          "name": "DB_HOSTNAME",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:897920190853:secret:my-app/db-credentials:host::"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/jwt-pizza-service",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "executionRoleArn": "arn:aws:iam::897920190853:role/jwt-pizza-ecs-new",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "runtimePlatform": {
+    "cpuArchitecture": "ARM64",
+    "operatingSystemFamily": "LINUX"
+  }
+}

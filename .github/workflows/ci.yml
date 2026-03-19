@@ -151,6 +151,22 @@ jobs:
           docker build --no-cache --platform=linux/arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY --push .
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >>  $GITHUB_OUTPUT
 
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json # You'll need this file in your repo
+          container-name: jwt-pizza-service
+          image: ${{ steps.login-ecr.outputs.registry }}/jwt-pizza-service:latest
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: jwt-pizza-service-new
+          cluster: jwt-pizza-service-new
+          wait-for-service-stability: true
+          
       - name: Deploy new container
         run: |
           aws ecs update-service \
