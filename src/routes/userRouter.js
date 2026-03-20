@@ -2,6 +2,7 @@ const express = require("express");
 const { asyncHandler } = require("../endpointHelper.js");
 const { DB, Role } = require("../database/database.js");
 const { authRouter, setAuth } = require("./authRouter.js");
+const { metrics } = require("../config.js");
 
 const userRouter = express.Router();
 
@@ -59,6 +60,7 @@ userRouter.get(
   "/me",
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
+    metrics.incrementRequests("GET");
     res.json(req.user);
   }),
 );
@@ -68,6 +70,7 @@ userRouter.put(
   "/:userId",
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
+    metrics.incrementRequests("PUT");
     const { name, email, password } = req.body;
     const userId = Number(req.params.userId);
     const user = req.user;
@@ -86,6 +89,7 @@ userRouter.delete(
   "/:userId",
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
+    metrics.incrementRequests("DELETE");
     const userID = Number(req.params.userId);
     await DB.deleteUser(userID);
     res.json({ message: "user deleted" });
@@ -97,6 +101,7 @@ userRouter.get(
   "/",
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
+    metrics.incrementRequests("GET");
     res.send(await DB.getUsers());
   }),
 );
