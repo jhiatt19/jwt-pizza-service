@@ -1,6 +1,5 @@
 const config = require("./config");
 const os = require("os");
-const database = require("./database/database");
 
 let totalRequests = 0;
 let totalGetRequests = 0;
@@ -88,7 +87,7 @@ function getActiveUserCount() {
   return count;
 }
 
-function sendMetricsToGrafana(metricName, metricValue, type, unit) {
+function sendMetricsToGrafana() {
   const now = Date.now() * 1000000;
   const metrics = {
     resourceMetrics: [
