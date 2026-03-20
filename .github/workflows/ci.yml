@@ -108,7 +108,7 @@ jobs:
               source: 'jwt-pizza-service',
               endpointUrl: process.env.METRICS_ENDPOINT_URL,
               apiKey: process.env.METRICS_API_KEY,
-              accountId: process.env.METRICS_ACCOUNT_ID,
+              accountId: process.env.METRICS_ACCOUNT_ID_KEY,
             },
           };
           EOF

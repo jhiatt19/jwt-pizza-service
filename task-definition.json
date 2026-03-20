@@ -22,7 +22,10 @@
           "name": "METRICS_ENDPOINT_URL",
           "value": "REPLACE_METRICS_ENDPOINT_URL"
         },
-        { "name": "METRICS_ACCOUNT_ID", "value": "REPLACE_METRICS_ACCOUNT_ID" },
+        {
+          "name": "METRICS_ACCOUNT_ID_KEY",
+          "value": "REPLACE_METRICS_ACCOUNT_ID_KEY"
+        },
         { "name": "METRICS_API_KEY", "value": "REPLACE_METRICS_API_KEY" }
       ],
       "logConfiguration": {
