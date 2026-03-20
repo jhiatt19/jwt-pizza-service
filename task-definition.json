@@ -17,7 +17,13 @@
         { "name": "DB_HOSTNAME", "value": "REPLACE_DB_HOST" },
         { "name": "DB_USERNAME", "value": "REPLACE_DB_USER" },
         { "name": "DB_PASSWORD", "value": "REPLACE_DB_PASSWORD" },
-        { "name": "DB_NAME", "value": "REPLACE_DB_NAME" }
+        { "name": "DB_NAME", "value": "REPLACE_DB_NAME" },
+        {
+          "name": "METRICS_ENDPOINT_URL",
+          "value": "REPLACE_METRICS_ENDPOINT_URL"
+        },
+        { "name": "METRICS_ACCOUNT_ID", "value": "REPLACE_METRICS_ACCOUNT_ID" },
+        { "name": "METRICS_API_KEY", "value": "REPLACE_METRICS_API_KEY" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
