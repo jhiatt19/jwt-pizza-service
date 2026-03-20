@@ -1,3 +1,13 @@
+jest.mock("./metrics", () => ({
+  incrementRequests: jest.fn(),
+  recordPizzaSale: jest.fn(),
+  incrementAuthAttemptsSuccessful: jest.fn(),
+  incrementAuthAttemptsFailure: jest.fn(),
+  incrementFailedPizzas: jest.fn(),
+  recordUserActivity: jest.fn(),
+  // ... any other functions you export from metrics.js
+}));
+
 const { DB, Role } = require("./database/database.js");
 const request = require("supertest");
 const app = require("./service");
@@ -210,7 +220,11 @@ test("list users", async () => {
   const listUsersRes = await request(app)
     .get("/api/user")
     .set("Authorization", "Bearer " + adminUserAuthToken);
-  expect(listUsersRes.body.users[0]).toMatchObject({
+  const foundUser = listUsersRes.body.users.find(
+    (user) => Number(user.id) === Number(adminUser.id),
+  );
+  expect(foundUser).toBeDefined();
+  expect(foundUser).toMatchObject({
     email: adminUser.email,
     id: adminUser.id,
     name: adminUser.name,

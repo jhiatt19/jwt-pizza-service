@@ -120,7 +120,6 @@ orderRouter.post(
     const start = Date.now();
     metrics.incrementRequests("POST");
     const orderReq = req.body;
-    console.log(orderReq);
     const order = await DB.addDinerOrder(req.user, orderReq);
     const r = await fetch(`${config.factory.url}/api/order`, {
       method: "POST",
@@ -137,7 +136,12 @@ orderRouter.post(
     if (r.ok) {
       res.send({ order, followLinkToEndChaos: j.reportUrl, jwt: j.jwt });
       const duration = Date.now() - start;
-      metrics.recordPizzaSale(duration);
+      let totalPrice = 0;
+      for (item of orderReq.items) {
+        totalPrice += item.price;
+      }
+      console.log(totalPrice);
+      metrics.recordPizzaSale(duration, totalPrice);
     } else {
       res.status(500).send({
         message: "Failed to fulfill order at factory",
