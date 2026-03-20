@@ -137,7 +137,7 @@ orderRouter.post(
       res.send({ order, followLinkToEndChaos: j.reportUrl, jwt: j.jwt });
       const duration = Date.now() - start;
       let totalPrice = 0;
-      for (item of orderReq.items) {
+      for (const item of orderReq.items) {
         totalPrice += item.price;
       }
       console.log(totalPrice);
