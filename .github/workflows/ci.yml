@@ -155,7 +155,7 @@ jobs:
           sed -i "s|REPLACE_DB_NAME|${{ secrets.DB_NAME }}|g" task-definition.json
           sed -i "s|REPLACE_METRICS_ENDPOINT_URL|${{secrets.METRICS_ENDPOINT_URL}}|g" task-definition.json
           sed -i "s|REPLACE_METRICS_API_KEY|${{secrets.METRICS_API_KEY}}|g" task-definition.json
-          sed -i "s|REPLACE_METRICS_ACCOUNT_ID|${{secrets.METRICS_ACCOUNT_ID_KEY}}|g" task-definition.json
+          sed -i "s|REPLACE_METRICS_ACCOUNT_ID_KEY|${{secrets.METRICS_ACCOUNT_ID_KEY}}|g" task-definition.json
 
       - name: Set up machine emulation
         uses: docker/setup-qemu-action@v3
