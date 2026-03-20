@@ -87,7 +87,7 @@ jobs:
           cp *.json dist
           # Note: The app will read from process.env in production, 
           # but we keep this file generation for consistency.
-          cat <<EOF > dist/config.js
+          cat <<'EOF' > dist/config.js
           module.exports = {
             jwtSecret: '${{ secrets.JWTSECRET }}',
             db: {
