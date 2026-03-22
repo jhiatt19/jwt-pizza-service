@@ -163,18 +163,18 @@ jobs:
               content = f.read()
 
           replacements = {
-              'REPLACE_DB_HOST':              os.environ['DB_HOSTNAME'],
-              'REPLACE_DB_USER':              os.environ['DB_USERNAME'],
-              'REPLACE_DB_PASSWORD':          os.environ['DB_PASSWORD'],
-              'REPLACE_DB_NAME':              os.environ['DB_NAME'],
-              'REPLACE_METRICS_ENDPOINT_URL': os.environ['METRICS_ENDPOINT_URL'],
-              'REPLACE_METRICS_API_KEY':      os.environ['METRICS_API_KEY'],
+              'REPLACE_DB_HOST':                os.environ['DB_HOSTNAME'],
+              'REPLACE_DB_USER':                os.environ['DB_USERNAME'],
+              'REPLACE_DB_PASSWORD':            os.environ['DB_PASSWORD'],
+              'REPLACE_DB_NAME':                os.environ['DB_NAME'],
+              'REPLACE_METRICS_ENDPOINT_URL':   os.environ['METRICS_ENDPOINT_URL'],
+              'REPLACE_METRICS_API_KEY':        os.environ['METRICS_API_KEY'],
               'REPLACE_METRICS_ACCOUNT_ID_KEY': os.environ['METRICS_ACCOUNT_ID_KEY'],
           }
 
           for placeholder, value in replacements.items():
-              if not value:
-                  print(f'ERROR: Value for {placeholder} is empty', file=sys.stderr)
+              if not value.strip():
+                  print(f'ERROR: Value for {placeholder} is empty or whitespace', file=sys.stderr)
                   sys.exit(1)
               content = content.replace(placeholder, value)
 
