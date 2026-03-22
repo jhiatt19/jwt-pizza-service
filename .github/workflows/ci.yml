@@ -146,6 +146,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Inspect Task Definition placeholders
+        run: grep "REPLACE_" task-definition.json
+
       - name: Inject GitHub Secrets into Task Definition
         env:
           DB_HOSTNAME: ${{ secrets.DB_HOSTNAME }}
