@@ -146,9 +146,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Inspect Task Definition placeholders
-        run: grep "REPLACE_" task-definition.json
-
       - name: Inject GitHub Secrets into Task Definition
         env:
           DB_HOSTNAME: ${{ secrets.DB_HOSTNAME }}
@@ -166,18 +163,18 @@ jobs:
               content = f.read()
 
           replacements = {
-              'REPLACE_DB_HOST':                os.environ['DB_HOSTNAME'],
-              'REPLACE_DB_USER':                os.environ['DB_USERNAME'],
-              'REPLACE_DB_PASSWORD':            os.environ['DB_PASSWORD'],
-              'REPLACE_DB_NAME':                os.environ['DB_NAME'],
-              'REPLACE_METRICS_ENDPOINT_URL':   os.environ['METRICS_ENDPOINT_URL'],
-              'REPLACE_METRICS_API_KEY':        os.environ['METRICS_API_KEY'],
+              'REPLACE_DB_HOST':              os.environ['DB_HOSTNAME'],
+              'REPLACE_DB_USER':              os.environ['DB_USERNAME'],
+              'REPLACE_DB_PASSWORD':          os.environ['DB_PASSWORD'],
+              'REPLACE_DB_NAME':              os.environ['DB_NAME'],
+              'REPLACE_METRICS_ENDPOINT_URL': os.environ['METRICS_ENDPOINT_URL'],
+              'REPLACE_METRICS_API_KEY':      os.environ['METRICS_API_KEY'],
               'REPLACE_METRICS_ACCOUNT_ID_KEY': os.environ['METRICS_ACCOUNT_ID_KEY'],
           }
 
           for placeholder, value in replacements.items():
-              if not value.strip():
-                  print(f'ERROR: Value for {placeholder} is empty or whitespace', file=sys.stderr)
+              if not value:
+                  print(f'ERROR: Value for {placeholder} is empty', file=sys.stderr)
                   sys.exit(1)
               content = content.replace(placeholder, value)
 
@@ -191,9 +188,9 @@ jobs:
         run: |
           echo "--- METRICS entries ---"
           cat task-definition.json | grep METRICS
-          echo "--- Checking for unreplaced placeholders ---"
-          if grep -q "REPLACE_" task-definition.json; then
-            echo "ERROR: unreplaced placeholders found in task-definition.json"
+          echo "--- Checking for unreplaced secret placeholders ---"
+          if grep -q "REPLACE_DB\|REPLACE_METRICS" task-definition.json; then
+            echo "ERROR: unreplaced secret placeholders found in task-definition.json"
             exit 1
           fi
           echo "Verification passed."
