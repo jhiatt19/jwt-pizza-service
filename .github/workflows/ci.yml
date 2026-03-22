@@ -159,7 +159,12 @@ jobs:
           sed -i "s|REPLACE_METRICS_ACCOUNT_ID_KEY|${{secrets.METRICS_ACCOUNT_ID_KEY}}|g" task-definition.json
 
       - name: Verify Task Definition
-        run: cat task-definition.json | grep METRICS
+        run: |
+          cat task-definition.json | grep METRICS
+          if grep -q "REPLACE_" task-definition.json; then
+            echo "FAILED: placeholders not replaced"
+            exit 1
+          fi
 
       - name: Set up machine emulation
         uses: docker/setup-qemu-action@v3
