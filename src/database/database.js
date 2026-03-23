@@ -535,7 +535,8 @@ class DB {
       `DROP DATABASE IF EXISTS \`${config.db.connection.database}\``,
     );
     console.log(success);
-    connection.initializeDatabase();
+    const success2 = await connection.initializeDatabase();
+    console.log(success2);
   }
 }
 
