@@ -169,7 +169,13 @@ function sendMetricsToGrafana() {
                 unit: "usd",
                 sum: {
                   dataPoints: [
-                    { asInt: Math.floor(totalRevenue), timeUnixNano: now },
+                    {
+                      asInt: Math.floor(totalRevenue),
+                      timeUnixNano: now,
+                      attributes: [
+                        { key: "rev", value: { stringValue: "REVENUE" } },
+                      ],
+                    },
                   ],
                   isMonotonic: true,
                   aggregationTemporality: "AGGREGATION_TEMPORALITY_CUMULATIVE",
@@ -201,6 +207,9 @@ function sendMetricsToGrafana() {
                     {
                       asInt: getActiveUserCount(),
                       timeUnixNano: now,
+                      attributes: [
+                        { key: "users", value: { stringValue: "Total" } },
+                      ],
                     },
                   ],
                 },
@@ -225,6 +234,8 @@ function sendMetricsToGrafana() {
                       ],
                     },
                   ],
+                  aggregationTemporality: "AGGREGATION_TEMPORALITY_CUMULATIVE",
+                  isMonotonic: true,
                 },
               },
               {
@@ -263,11 +274,11 @@ function sendMetricsToGrafana() {
   };
 
   const body = JSON.stringify(metrics);
-  fetch(`${config.endpointUrl}`, {
+  fetch(`${config.metrics.endpointUrl}`, {
     method: "POST",
     body: body,
     headers: {
-      Authorization: `Bearer ${config.accountId}:${config.apiKey}`,
+      Authorization: `Bearer ${config.metrics.accountId}:${config.metrics.apiKey}`,
       "Content-Type": "application/json",
     },
   })
