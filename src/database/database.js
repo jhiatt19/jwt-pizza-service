@@ -529,6 +529,13 @@ class DB {
     );
     return rows.length > 0;
   }
+
+  async resetDatabase(connection) {
+    const success = await connection.query(
+      "DROP DATABASE `jwt-pizza-service-db`",
+    );
+    connection.initializeDatabase();
+  }
 }
 
 const db = new DB();

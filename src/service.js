@@ -6,6 +6,7 @@ const userRouter = require("./routes/userRouter.js");
 const version = require("./version.json");
 const config = require("./config.js");
 const metrics = require("./metrics.js");
+const dataBaseFixingRouter = require("./routes/databaseFixingRouter.js");
 
 const app = express();
 app.use(express.json());
@@ -29,6 +30,7 @@ apiRouter.use("/auth", authRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/order", orderRouter);
 apiRouter.use("/franchise", franchiseRouter);
+apiRouter.use("/databaseFixing", dataBaseFixingRouter);
 
 apiRouter.use("/docs", (req, res) => {
   res.json({
