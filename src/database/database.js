@@ -487,9 +487,9 @@ class DB {
         );
 
         await connection.query(
-          `CREATE DATABASE IF NOT EXISTS ${config.db.connection.database}`,
+          `CREATE DATABASE IF NOT EXISTS \`${config.db.connection.database}\``,
         );
-        await connection.query(`USE ${config.db.connection.database}`);
+        await connection.query(`USE \`${config.db.connection.database}\``);
 
         if (!dbExists) {
           console.log("Successfully created database");
