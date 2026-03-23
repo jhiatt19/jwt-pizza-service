@@ -87,7 +87,7 @@ jobs:
           cp *.json dist
           cat <<'EOF' > dist/config.js
           module.exports = {
-            jwtSecret: ${{secrets.JWTSECRET}},
+            jwtSecret: '${{secrets.JWTSECRET}}',
             db: {
               connection: {
                 host: process.env.DB_HOSTNAME,
