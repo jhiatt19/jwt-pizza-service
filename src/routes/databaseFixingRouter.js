@@ -11,3 +11,5 @@ dataBaseFixingRouter.post(
     DB.resetDatabase(conn);
   }),
 );
+
+module.exports = dataBaseFixingRouter;
