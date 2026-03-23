@@ -532,10 +532,9 @@ class DB {
 
   async resetDatabase(connection) {
     const success = await connection.query(
-      "DROP DATABASE `jwt-pizza-service-db`",
+      `DROP DATABASE IF EXISTS \`${config.db.connection.database}\``,
     );
-    const success2 = await connection.query("DROP DATABASE pizza");
-    console.log(success, success2);
+    console.log(success);
     connection.initializeDatabase();
   }
 }
