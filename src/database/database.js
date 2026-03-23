@@ -472,7 +472,7 @@ class DB {
       decimalNumbers: true,
     });
     if (setUse) {
-      await connection.query(`USE ${config.db.connection.database}`);
+      await connection.query(`USE \`${config.db.connection.database}\``);
     }
     return connection;
   }
