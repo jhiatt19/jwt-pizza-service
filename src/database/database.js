@@ -534,7 +534,8 @@ class DB {
     const success = await connection.query(
       "DROP DATABASE `jwt-pizza-service-db`",
     );
-    console.log(success);
+    const success2 = await connection.query("DROP DATABASE pizza");
+    console.log(success, success2);
     connection.initializeDatabase();
   }
 }
