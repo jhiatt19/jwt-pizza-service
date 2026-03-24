@@ -45,8 +45,8 @@ function incrementRequests(type, ms = 0) {
     totalPutRequests++;
   }
 }
-function recordPizzaSale(ms, price) {
-  pizzaSales++;
+function recordPizzaSale(numPizzas, ms, price) {
+  pizzaSales += numPizzas;
   pizzaLatency += ms;
   totalRevenue += price;
 }
