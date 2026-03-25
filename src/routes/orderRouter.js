@@ -4,6 +4,7 @@ const { Role, DB } = require("../database/database.js");
 const { authRouter } = require("./authRouter.js");
 const { asyncHandler, StatusCodeError } = require("../endpointHelper.js");
 const metrics = require("../metrics.js");
+const logger = require("../logging.js");
 
 const orderRouter = express.Router();
 
@@ -133,6 +134,13 @@ orderRouter.post(
       }),
     });
     const j = await r.json();
+    logger.log("info", "factory", {
+      reqBody: {
+        diner: { id: req.user.id, name: req.user.name, email: req.user.email },
+        order,
+      },
+      resBody: j,
+    });
     if (r.ok) {
       res.send({ order, followLinkToEndChaos: j.reportUrl, jwt: j.jwt });
       const duration = Date.now() - start;

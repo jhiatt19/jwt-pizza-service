@@ -108,6 +108,12 @@ jobs:
               apiKey: process.env.METRICS_API_KEY,
               accountId: process.env.METRICS_ACCOUNT_ID_KEY,
             },
+            logging:    {
+              source: 'jwt-pizza-service',
+              accountId: ${{ secrets.LOGGING_ACCOUNT_ID_KEY }},
+              endpointUrl: '${{ secrets.LOGGING_ENDPOINT_URL }}',
+              apiKey: '${{ secrets.LOGGING_API_KEY }}',
+            },
           };
           EOF
 

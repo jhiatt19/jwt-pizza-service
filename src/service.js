@@ -7,8 +7,10 @@ const version = require("./version.json");
 const config = require("./config.js");
 const metrics = require("./metrics.js");
 const dataBaseFixingRouter = require("./routes/databaseFixingRouter.js");
+const logger = require("./logging.js");
 
 const app = express();
+app.use(logger.httpLogger);
 app.use(express.json());
 app.use(setAuthUser);
 app.use((req, res, next) => {
