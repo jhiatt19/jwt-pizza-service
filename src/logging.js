@@ -9,8 +9,8 @@ class Logger {
         path: req.originalUrl,
         method: req.method,
         statusCode: res.statusCode,
-        reqBody: this.sanitize(req.body),
-        resBody: this.sanitize(resBody),
+        reqBody: req.body,
+        resBody: resBody,
       };
       const level = this.statusToLogLevel(res.statusCode);
       this.log(level, "http", logData);
@@ -44,8 +44,10 @@ class Logger {
 
   sanitize(logData) {
     const sensitiveKeys = ["password", "token", "jwt"];
+    const dataToProcess =
+      typeof logData === "string" ? JSON.parse(logData) : logData;
     return JSON.stringify(
-      logData,
+      dataToProcess,
       (key, value) => {
         if (sensitiveKeys.some((s) => s.toLowerCase() === key.toLowerCase())) {
           return "*****";
