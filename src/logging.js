@@ -47,7 +47,7 @@ class Logger {
     return JSON.stringify(
       logData,
       (key, value) => {
-        if (sensitiveKeys.some((s) => s.lowerCase() === key.lowerCase())) {
+        if (sensitiveKeys.some((s) => s.toLowerCase() === key.toLowerCase())) {
           return "*****";
         }
         return value;
