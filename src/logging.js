@@ -43,10 +43,16 @@ class Logger {
   }
 
   sanitize(logData) {
-    logData = JSON.stringify(logData);
-    return logData.replace(
-      /\\"password\\":\s*\\"[^"]*\\"/g,
-      '\\"password\\": \\"*****\\"',
+    const sensitiveKeys = ["password", "token"];
+    return JSON.stringify(
+      logData,
+      (key, value) => {
+        if (sensitiveKeys.some((s) => s.lowerCase() === key.lowerCase())) {
+          return "*****";
+        }
+        return value;
+      },
+      2,
     );
   }
 
