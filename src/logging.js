@@ -43,7 +43,7 @@ class Logger {
   }
 
   sanitize(logData) {
-    const sensitiveKeys = ["password", "token"];
+    const sensitiveKeys = ["password", "token", "jwt"];
     return JSON.stringify(
       logData,
       (key, value) => {
