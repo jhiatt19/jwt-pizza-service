@@ -45,7 +45,9 @@ class Logger {
   sanitize(logData) {
     const sensitiveKeys = ["password", "token", "jwt", "user"];
     const dataToProcess =
-      typeof logData === "string" ? JSON.parse(logData) : logData;
+      typeof logData === "string" && logData.trim()
+        ? JSON.parse(logData)
+        : logData;
     return JSON.stringify(
       dataToProcess,
       (key, value) => {
