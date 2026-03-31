@@ -51,11 +51,10 @@ class Logger {
     return JSON.stringify(
       dataToProcess,
       (key, value) => {
-        this.log("testing", "SANITIZE", key);
         if (sensitiveKeys.some((s) => s.toLowerCase() === key.toLowerCase())) {
           return "*****";
         }
-        return value;
+        return (key, value);
       },
       2,
     );
