@@ -43,12 +43,13 @@ class Logger {
   }
 
   sanitize(logData) {
-    const sensitiveKeys = ["password", "token", "jwt"];
+    const sensitiveKeys = ["password", "token", "jwt", "user"];
     const dataToProcess =
       typeof logData === "string" ? JSON.parse(logData) : logData;
     return JSON.stringify(
       dataToProcess,
       (key, value) => {
+        this.log("testing", "SANITIZE", key);
         if (sensitiveKeys.some((s) => s.toLowerCase() === key.toLowerCase())) {
           return "*****";
         }
