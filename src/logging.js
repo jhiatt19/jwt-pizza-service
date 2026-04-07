@@ -48,16 +48,12 @@ class Logger {
       typeof logData === "string" && logData.trim()
         ? JSON.parse(logData)
         : logData;
-    return JSON.stringify(
-      dataToProcess,
-      (key, value) => {
-        if (sensitiveKeys.some((s) => s.toLowerCase() === key.toLowerCase())) {
-          return "*****";
-        }
-        return value;
-      },
-      2,
-    );
+    return JSON.stringify(dataToProcess, (key, value) => {
+      if (sensitiveKeys.some((s) => s.toLowerCase() === key.toLowerCase())) {
+        return "*****";
+      }
+      return value;
+    });
   }
 
   sendLogToGrafana(event) {
