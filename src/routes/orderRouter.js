@@ -143,13 +143,13 @@ orderRouter.post(
     });
     if (r.ok) {
       res.send({ order, followLinkToEndChaos: j.reportUrl, jwt: j.jwt });
-      const duration = Date.now() - start;
       let totalPrice = 0;
       const itemCount = orderReq?.items.length ?? 0;
       for (let item of orderReq.items) {
         totalPrice += item.price;
       }
       console.log(totalPrice);
+      const duration = Date.now() - start;
       metrics.recordPizzaSale(itemCount, duration, totalPrice);
     } else {
       res.status(500).send({
