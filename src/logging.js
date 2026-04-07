@@ -54,7 +54,7 @@ class Logger {
         if (sensitiveKeys.some((s) => s.toLowerCase() === key.toLowerCase())) {
           return "*****";
         }
-        return (key, value);
+        return value;
       },
       2,
     );
