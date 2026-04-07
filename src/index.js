@@ -2,7 +2,7 @@ const app = require("./service.js");
 const logger = require("./logging.js");
 
 const port = process.argv[2] || 3000;
-server = app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server started on port ${port}`);
   process.on("unhandledRejection", (reason) => {
     logger.log("error", "exception", { reason: reason.stack || reason });
