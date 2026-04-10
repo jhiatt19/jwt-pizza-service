@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const config = require("../config.js");
-const { asyncHandler } = require("../endpointHelper.js");
+const { asyncHandler, StatusCodeError } = require("../endpointHelper.js");
 const { DB, Role } = require("../database/database.js");
 const metrics = require("../metrics.js");
 
@@ -105,6 +105,9 @@ authRouter.put(
     metrics.incrementRequests("PUT");
     const { email, password } = req.body;
     const user = await DB.getUser(email, password);
+    if (user == StatusCodeError) {
+      res.json({ user: "unknown user" });
+    }
     const auth = await setAuth(user);
     res.json({ user: user, token: auth });
   }),
