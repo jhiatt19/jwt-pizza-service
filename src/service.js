@@ -33,7 +33,7 @@ apiRouter.use("/auth", authRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/order", orderRouter);
 apiRouter.use("/franchise", franchiseRouter);
-apiRouter.use("/databaseFixing", dataBaseFixingRouter);
+// apiRouter.use("/databaseFixing", dataBaseFixingRouter);
 
 apiRouter.use("/docs", (req, res) => {
   res.json({
