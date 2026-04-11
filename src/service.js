@@ -6,7 +6,7 @@ const userRouter = require("./routes/userRouter.js");
 const version = require("./version.json");
 const config = require("./config.js");
 const metrics = require("./metrics.js");
-const dataBaseFixingRouter = require("./routes/databaseFixingRouter.js");
+//const dataBaseFixingRouter = require("./routes/databaseFixingRouter.js");
 const logger = require("./logging.js");
 
 const app = express();
